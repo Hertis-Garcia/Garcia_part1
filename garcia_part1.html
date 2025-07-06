@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Song Request and Recommendation Tallier</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(to bottom, #121212, #1db954);
+        color: #ddd;
+      }
+
+      header {
+        background-color: #2a2a2a;
+        color: #1db954;
+        padding: 20px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: 600;
+        border-bottom: 4px solid rgb(71, 71, 71);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding: 0 20px;
+        gap: 20px;
+        box-sizing: border-box;
+      }
+
+      .column {
+        background-color: black;
+        flex: 1;
+        padding: 30px;
+        border: 2px solid #444;
+        border-radius: 15px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+      }
+
+      .column:last-child {
+        margin-right: 0;
+      }
+
+      .column:hover {
+        transform: translateY(-10px);
+      }
+
+      h2 {
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        color: #ddd;
+        margin-bottom: 8px;
+      }
+
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #444;
+        border-radius: 8px;
+        background-color: #2d2d2d;
+        color: #fff;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      form input:focus,
+      form select:focus,
+      form textarea:focus {
+        border-color: #1db954;
+        outline: none;
+      }
+
+      form button {
+        width: 300px;
+        padding: 15px;
+        background-color: #1db954;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: block;
+        margin: 0 auto; /* Center align */
+      }
+
+      form button:hover {
+        background-color: #003312;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      table th,
+      table td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #444;
+        color: #fff;
+      }
+
+      table thead {
+        background-color: #1db954;
+        font-weight: 600;
+      }
+
+      table tbody tr {
+        justify-content: space-between;
+        background-color: #2d2d2d;
+      }
+
+      table tbody td:hover {
+        background-color: #004217;
+      }
+
+      table tbody td {
+        word-wrap: break-word;
+        max-width: 200px;
+      }
+
+      .checkbox-group table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .checkbox-group {
+        display: table;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .checkbox-group tr,
+      .checkbox-group td {
+        text-align: left;
+        padding: 10px;
+        border: none;
+        background-color: transparent;
+      }
+
+      /* Flexbox for label and checkbox */
+      .checkbox-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        color: #ddd;
+        font-weight: 400;
+        gap: 0;
+        margin-right: 0;
+        padding-right: 0;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        margin-left: 0;
+      }
+
+      .checkbox-group td {
+        background-color: transparent;
+      }
+
+      .spotify-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #1db954;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 20px;
+        width: 300px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 0 auto; /* Center align */
+      }
+
+      .spotify-button:hover {
+        background-color: #004b1a;
+      }
+
+      .spotify-button img {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+      }
+
+      @media (max-width: 768px) {
+        .row {
+          flex-direction: column;
+          padding: 0 10px;
+        }
+
+        .column {
+          margin-bottom: 20px;
+          margin-right: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>Song Request and Recommendation Tallier</header>
+
+    <div class="row">
+      <!-- Left Column - Song Recommendation Form -->
+      <div class="column">
+        <h2>Song Recommendation Form</h2>
+        <form id="googleForm">
+          <label for="songTitle">Song Title:</label>
+          <input type="text" id="songTitle" name="songTitle" required />
+
+          <label for="artist">Artist:</label>
+          <input type="text" id="artist" name="artist" required />
+
+          <label for="genre">Genre:</label>
+          <select id="genre" name="genre" required>
+            <option value="Pop">Pop</option>
+            <option value="Rock">Rock</option>
+            <option value="Hip-Hop">Hip-Hop</option>
+            <option value="Jazz">Jazz</option>
+            <option value="Classical">Classical</option>
+          </select>
+
+          <label for="reason">Why do you recommend this song?</label>
+          <textarea id="reason" name="reason" rows="4" required></textarea>
+
+          <!-- Checkbox Group for "Who should listen to this song?" -->
+          <label>Who should listen to this song?</label>
+          <div class="checkbox-group">
+            <table>
+              <tr>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Happy</span>
+                    <input type="checkbox" name="audience" value="Happy" />
+                  </label>
+                </td>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Sad</span>
+                    <input type="checkbox" name="audience" value="Sad" />
+                  </label>
+                </td>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Broken Hearted</span>
+                    <input
+                      type="checkbox"
+                      name="audience"
+                      value="Broken Hearted"
+                    />
+                  </label>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Partying</span>
+                    <input type="checkbox" name="audience" value="Partying" />
+                  </label>
+                </td>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>In love</span>
+                    <input type="checkbox" name="audience" value="In love" />
+                  </label>
+                </td>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Chill</span>
+                    <input type="checkbox" name="audience" value="Chill" />
+                  </label>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Motivated</span>
+                    <input type="checkbox" name="audience" value="Motivated" />
+                  </label>
+                </td>
+                <td>
+                  <label class="checkbox-flex">
+                    <span>Relaxing</span>
+                    <input type="checkbox" name="audience" value="Relaxing" />
+                  </label>
+                </td>
+                <td></td>
+                <!-- Empty cell for spacing -->
+              </tr>
+            </table>
+          </div>
+
+          <button type="submit">Submit Recommendation</button>
+        </form>
+      </div>
+
+      <!-- Right Column - Table for Song Recommendations -->
+      <div class="column">
+        <h2>Your Song Recommendations</h2>
+        <table id="songTable">
+          <thead>
+            <tr>
+              <th>Song Title</th>
+              <th>Artist</th>
+              <th>Genre</th>
+              <th>Recommendation</th>
+              <th>Who Should Listen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Song Recommendations will go here -->
+          </tbody>
+        </table>
+        <br />
+        <br />
+
+        <!-- Spotify Button with Logo -->
+        <a
+          href="https://open.spotify.com/"
+          target="_blank"
+          class="spotify-button"
+        >
+          <img
+            src="https://storage.googleapis.com/pr-newsroom-wp/1/2023/05/Spotify_Primary_Logo_RGB_Green.png"
+            alt="Spotify Logo"
+          />
+          Search The Song On Spotify
+        </a>
+      </div>
+    </div>
+
+    <script>
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbzCcpKUwK8ust9_LWMyWMsbCGIYtheW4lsYVd6NCYLt0RORw1HYsblJa2YMJQnhK3stug/exec";
+
+      const form = document.getElementById("googleForm");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        // Join all selected checkboxes into a comma-separated string
+        const checkedBoxes = [];
+        form
+          .querySelectorAll('input[name="audience"]:checked')
+          .forEach((box) => {
+            checkedBoxes.push(box.value);
+          });
+        formData.set("audience", checkedBoxes.join(", "));
+
+        fetch(scriptURL, { method: "POST", body: formData })
+          .then((response) => {
+            alert("Form submitted successfully!");
+            form.reset();
+          })
+          .catch((error) => alert("Error!", error.message));
+      });
+
+
+
+      // Handle form submission and update the table
+      document
+        .getElementById("googleForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const songTitle = document.getElementById("songTitle").value;
+          const artist = document.getElementById("artist").value;
+          const genre = document.getElementById("genre").value;
+          const reason = document.getElementById("reason").value;
+
+          // Get checked audience options
+          const audience = [];
+          const checkboxes = document.querySelectorAll(
+            'input[name="audience"]:checked'
+          );
+          checkboxes.forEach((checkbox) => audience.push(checkbox.value));
+
+          const tableBody = document
+            .getElementById("songTable")
+            .getElementsByTagName("tbody")[0];
+
+          const newRow = tableBody.insertRow();
+          newRow.innerHTML = ` 
+            <td>${songTitle}</td>
+            <td>${artist}</td>
+            <td>${genre}</td>
+            <td>${reason}</td>
+            <td>${audience.join(", ")}</td> <!-- Display selected audience -->
+          `;
+
+          // Clear the form
+          document.getElementById("googleForm").reset();
+        });
+    </script>
+  </body>
+</html>
